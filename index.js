@@ -1,5 +1,8 @@
 "use strict";
 
+console.group("<<--- Базовый уровень --->>");
+
+console.group("<<--- Задание 1 --->>");
 // 1 Вычислить сумму первых N элементов последовательности . параметр N задает пользователь
 function task1(N) {
   if (typeof N !== "number") {
@@ -12,7 +15,10 @@ function task1(N) {
   }
   return storage;
 }
+console.log("Задание 1: ", task1(3));
+console.groupEnd("<<--- Задание 1 --->>");
 
+console.group("<<--- Задание 2 --->>");
 // 2.1 Создать объект student который содержит следующие свойства: имя, фамилию, пол, контактные данные.
 const Student_2_1 = {
   name: "Ivanov",
@@ -34,6 +40,7 @@ const University = {
   department: "Department of Software Engineering",
   students: [
     {
+      id: 0,
       name: "Ivan",
       surname: "Ivanov",
       sex: "M",
@@ -43,6 +50,7 @@ const University = {
       },
     },
     {
+      id: 1,
       name: "Petr",
       surname: "Petrov",
       sex: "M",
@@ -55,57 +63,65 @@ const University = {
 };
 
 // 2.4 Реализовать функцию вывода на экран всю информацию о студенте
-function showInformationAboutStudent(surname) {
-  itemArray = University.students;
-  for (let i = 0; i < itemArray.length; i++) {
-    if (itemArray[i].surname === surname) {
-      return itemArray[i];
-    }
-  }
-  throw new Error("Студент не найден!");
+function showInformationAboutStudent(studentID) {
+  const studentData = this.students.find((student) => student.id === studentID);
+  if (studentData) return studentData;
+  return null;
 }
 
+const bindShowInformationAboutStudent =
+  showInformationAboutStudent.bind(University);
+console.log("Задание 2.4: ", bindShowInformationAboutStudent(1));
+console.groupEnd("<<--- Задание 2 --->>");
+
+console.group("<<--- Задание 3 --->>");
 // 3.1 Создать числовой массив и проинициализировать его из 25 элементов.
-const numbers = [];
-for (let i = 0; i < 25; i++) {
-  numbers[i] = Math.floor(Math.random() * 1000);
+const getNumbersArray = (n) => {
+  return Array(n)
+    .fill(null)
+    .map(() => Math.floor(Math.random() * 1000));
+};
 
-  // 3.2 Вывести элементы с четными индексами (четные числа делятся на 2 без остатка)
-  if (i % 2 === 0) {
-    console.log(
-      `Задание 3.2. Число массива numbers, индекс которого - четный: ${numbers[i]}, а его индекс: ${i}`
-    );
-  }
+// 3.2 Вывести элементы только с четным индексом
+const getElementsWithEvenIndex = (array) => {
+  return array.filter((_, index) => index % 2 === 0);
+};
 
-  // 3.3 Вывести только четные элементы
-  if (numbers[i] % 2 === 0) {
-    console.log(
-      `Задание 3.3. Число массива numbers, которое делится без остатка на 2: ${numbers[i]}`
-    );
-  }
-}
+// 3.3 Вывести только четные элементы
+const getEvenElements = (array) => {
+  return array.filter((item) => item % 2 === 0);
+};
+
+const numbers = getNumbersArray(25);
+numbers[12] = 0;
+numbers[1] = 0;
+console.log("Задание 3.1:", numbers);
+console.log("Задание 3.2:", getElementsWithEvenIndex(numbers));
+console.log("Задание 3.3:", getEvenElements(numbers));
 
 // 3.4 Вывести индексы нулевых элементов (элемент равен нулю)
-numbers[12] = 0;
-numbers[21] = 0;
-let counter = 0;
-for (let i = 0; i < numbers.length; i++) {
-  if (numbers[i] === 0) {
-    console.log(
-      `Задание 3.4. Индекс нулевого элемента из массива numbers: ${i}`
-    );
+const getZeroIndices = (array) => {
+  const mappedArray = array.map((item, index) => (item === 0 ? index : null));
 
-    // 3.5 Подсчитать количество нулевых элементов
-    counter++;
-  }
-}
-console.log(`Задание 3.5. Количество нулевых элементов: ${counter}`);
+  return mappedArray.filter((item) => item !== null);
+};
 
+// 3.5 Подсчитать количество нулевых элементов
+const getZeroElementCount = (array) => {
+  return array.reduce((prev, current) => prev + Number(current === 0), 0);
+};
+
+console.log("Задание 3.4: ", getZeroIndices(numbers));
+console.log("Задание 3.5: ", getZeroElementCount(numbers));
+console.groupEnd("<<--- Задание 3 --->>");
+
+console.group("<<--- Задание 4 --->>");
 // 4 Создать классы:
 // - Книга (автор, название, год издания, издательство)
 // - Электронная версия книги (автор, название, год издания, издательство, формат, электронный номер)
 class Book {
-  constructor(author, name, year, publishingOffice) {
+  constructor(id, author, name, year, publishingOffice) {
+    this.id = id;
     this.author = author;
     this.name = name;
     this.year = year;
@@ -114,22 +130,27 @@ class Book {
 }
 
 class Ebook extends Book {
-  constructor(author, name, year, publishingOffice, Enumber) {
-    super(author, name, year, publishingOffice);
-    this.Enumber = Enumber;
+  constructor(id, author, name, year, publishingOffice) {
+    super(id, author, name, year, publishingOffice);
+    this.format = "electronical";
   }
 }
 
 // TEST (4 задание)
-const bookFranko = new Book("Ivan Franko", "Moisey", "1856", "Ranok");
+const bookFranko = new Book(1234, "Ivan Franko", "Moisey", "1856", "Ranok");
 const ebookSheva = new Ebook(
+  4321,
   "Taras Shev4enko",
   "Kobzar",
   "1685",
-  "Ukraine",
-  125851
+  "Ukraine"
 );
 
+console.log("Задание 4 (Book): ", bookFranko);
+console.log("Задание 4 (Ebook): ", ebookSheva);
+console.groupEnd("<<--- Задание 4 --->>");
+
+console.group("<<--- Задание 5 --->>");
 // 5
 // Требуется написать функцию, выводящую в консоль числа от 1 до n, где n —
 // это целое число, которая функция принимает в качестве параметра, с
@@ -137,30 +158,33 @@ const ebookSheva = new Ebook(
 // вывод fizzbuzz вместо чисел, кратных как 3, так и 5.
 // вывод fizz вместо чисел, кратных 3;
 // вывод buzz вместо чисел, кратных 5;
-function outputNumbers(n) {
-  try {
-    if (typeof n !== "number") {
-      throw new Error("Функция работает только с числами");
-    }
-    for (; n > 0; n--) {
-      if (n % 3 === 0 && n % 5 === 0) {
-        console.log(
-          `fizzbuzz, ибо ${n} - кратно 5 (${n} / 5 = ${
-            n / 5
-          }) и ${n} - кратно 3 (${n} / 3 = ${n / 3}).`
-        );
-      }
-      if (n % 3 === 0) {
-        console.log(`fizz, ибо ${n} - кратно 3 (${n} / 3 = ${n / 3}).`);
-      }
-      if (n % 5 === 0) {
-        console.log(`buzz, ибо ${n} - кратно 5 (${n} / 5 = ${n / 5}).`);
-      }
-    }
-  } catch (e) {
-    throw new Error(e);
+const checkNumberFizzBuzz = (number) => {
+  if (number % 3 === 0 && number % 5 === 0) return `${number}: fizzbuzz`;
+  if (number % 3 === 0) return `${number}: fizz`;
+  if (number % 5 === 0) return `${number}: buzz`;
+  return null;
+};
+
+const outputNumbers = (n) => {
+  if (typeof n !== "number") {
+    throw new Error("Функция работает только с числами");
   }
-}
+
+  const numbersArray = [];
+  for (let i = 1; i < n; i++) {
+    const checkResult = checkNumberFizzBuzz(i);
+    if (checkResult) {
+      numbersArray.push(checkResult);
+    }
+  }
+
+  return numbersArray;
+};
+
+console.log("Задание 5: ", outputNumbers(25));
+console.groupEnd("<<--- Задание 5 --->>");
+
+console.groupEnd("<<--- Базовый уровень --->>");
 
 // Advanced lvl
 class Universityy {
@@ -190,6 +214,9 @@ class Universityy {
           "Название университета университета должно быть строкой!"
         );
       }
+      if (newUniversityName.trim() === "") {
+        throw new Error("Задайте название университета!");
+      }
       this._universityName = newUniversityName;
     } catch (e) {
       throw new Error(e);
@@ -200,6 +227,9 @@ class Universityy {
       if (typeof newFaculty !== "string") {
         throw new TypeError("Название факультета должно быть строкой!");
       }
+      if (newFaculty.trim() === "") {
+        throw new Error("Задайте название факультета!");
+      }
       this._faculty = newFaculty;
     } catch (e) {
       throw new Error(e);
@@ -209,6 +239,9 @@ class Universityy {
     try {
       if (typeof newDepartment !== "string") {
         throw new TypeError("Название кафедры должно быть строкой!");
+      }
+      if (newDepartment.trim() === "") {
+        throw new Error("Задайте название кафедры!");
       }
       this._department = newDepartment;
     } catch (e) {
@@ -305,6 +338,9 @@ class Student extends Universityy {
       if (typeof newName !== "string") {
         throw new TypeError("Имя студента должно быть строкой!");
       }
+      if (newName.trim === "") {
+        throw new Error("Задайте имя студента!");
+      }
       this._name = newName;
     } catch (e) {
       throw new Error(e);
@@ -314,6 +350,9 @@ class Student extends Universityy {
     try {
       if (typeof newSurname !== "string") {
         throw new TypeError("Фамилия студента должна быть строкой!");
+      }
+      if (newSurname.trim() === "") {
+        throw new Error("Задайте фамилию студента!");
       }
       this._surname = newSurname;
     } catch (e) {
@@ -329,6 +368,9 @@ class Student extends Universityy {
         throw new TypeError(
           "Дата поступления должна передаватся как строка в формате день.месяц.год!"
         );
+      }
+      if (newDateOfApplication.trim() === "") {
+        throw new Error("Задайте дату поступления!");
       }
 
       // проверка на валидность даты
@@ -406,3 +448,25 @@ const Druples = new Student(
   "Department of Software Engineering",
   "01.09.2016" // уже окончил
 );
+
+console.group("<<--- Продвинутый уровень --->>");
+
+console.group("<<--- Студенты --->>");
+console.log(Petrov);
+console.log(Sidorov);
+console.log(Ivanov);
+console.log(Marchenko);
+console.log(Sifonov);
+console.log(Druples);
+console.groupEnd("<<--- Студенты --->>");
+
+console.group("<<--- Курс студентов --->>");
+console.log(Petrov.courseNumber);
+console.log(Sidorov.courseNumber);
+console.log(Ivanov.courseNumber);
+console.log(Marchenko.courseNumber);
+console.log(Sifonov.courseNumber);
+console.log(Druples.courseNumber);
+console.groupEnd("<<--- Курс студентов --->>");
+
+console.groupEnd("<<--- Продвинутый уровень --->>");
